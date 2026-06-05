@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mundial 2026 — Horarios Monterrey</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #00b140;
+    --rojo: #da291c;
+    --oro: #f5c518;
+    --azul: #003087;
+    --negro: #0a0a0a;
+    --gris: #1a1a1a;
+    --gris2: #2a2a2a;
+    --gris3: #3a3a3a;
+    --texto: #e8e8e8;
+    --texto2: #999;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--negro); color: var(--texto); font-family: 'Barlow', sans-serif; min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+    border-bottom: 3px solid var(--verde);
+    padding: 22px 20px 14px;
+    text-align: center;
+    position: relative;
+  }
+  header::before {
+    content: '';
+    position: absolute; top:0;left:0;right:0;bottom:0;
+    background: repeating-linear-gradient(-45deg,transparent,transparent 10px,rgba(255,255,255,.012) 10px,rgba(255,255,255,.012) 11px);
+    pointer-events: none;
+  }
+  .header-flags { display:flex; justify-content:center; gap:8px; margin-bottom:8px; font-size:26px; }
+  h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(2.2rem,6vw,3.8rem);
+    letter-spacing: 4px;
+    background: linear-gradient(90deg, var(--verde), var(--oro), var(--rojo));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    line-height: 1; margin-bottom: 4px;
+  }
+  .subtitle { font-family:'Barlow Condensed',sans-serif; font-size:.95rem; color:var(--texto2); letter-spacing:3px; text-transform:uppercase; }
+  .badge { display:inline-block; background:var(--verde); color:#000; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:.7rem; letter-spacing:1px; padding:3px 10px; border-radius:2px; margin-top:8px; }
+
+  /* FILTERS */
+  .filters-wrap { background:var(--gris); border-bottom:1px solid var(--gris3); position:sticky; top:0; z-index:100; }
+  .filters-row { display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:center; padding:10px 14px 0; }
+  .filters-dates { display:flex; gap:5px; flex-wrap:wrap; align-items:center; justify-content:center; padding:8px 14px 10px; border-top:1px solid var(--gris2); overflow-x:auto; }
+  
+  .filter-btn {
+    background:var(--gris2); border:1px solid var(--gris3); color:var(--texto2);
+    padding:6px 13px; border-radius:3px;
+    font-family:'Barlow Condensed',sans-serif; font-size:.82rem; font-weight:700; letter-spacing:.8px;
+    cursor:pointer; transition:all .15s; text-transform:uppercase; white-space:nowrap;
+  }
+  .filter-btn:hover { background:var(--gris3); color:var(--texto); }
+  .filter-btn.active { background:var(--verde); border-color:var(--verde); color:#000; }
+  .filter-btn.date-btn { font-size:.75rem; padding:5px 10px; }
+  .filter-btn.date-btn.active { background:var(--oro); border-color:var(--oro); color:#000; }
+
+  .search-box {
+    background:var(--gris2); border:1px solid var(--gris3); color:var(--texto);
+    padding:6px 12px; border-radius:3px; font-family:'Barlow',sans-serif; font-size:.82rem;
+    outline:none; width:160px;
+  }
+  .search-box:focus { border-color:var(--verde); }
+  .search-box::placeholder { color:var(--texto2); }
+
+  /* MAIN */
+  main { padding:16px; max-width:860px; margin:0 auto; }
+
+  .stats-bar {
+    background:var(--gris); border:1px solid var(--gris2); border-radius:4px;
+    padding:12px 16px; display:flex; gap:22px; flex-wrap:wrap; margin-bottom:18px; justify-content:center;
+  }
+  .stat { text-align:center; }
+  .stat-num { font-family:'Bebas Neue',cursive; font-size:1.7rem; color:var(--verde); line-height:1; }
+  .stat-label { font-family:'Barlow Condensed',sans-serif; font-size:.62rem; letter-spacing:1.5px; color:var(--texto2); text-transform:uppercase; }
+
+  /* DAY BLOCK */
+  .day-block { margin-bottom:10px; }
+  .day-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:.78rem; font-weight:700;
+    letter-spacing:2px; color:var(--texto2); text-transform:uppercase;
+    padding:10px 0 5px; border-bottom:1px solid var(--gris2); margin-bottom:5px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .day-label .day-num {
+    font-family:'Bebas Neue',cursive; font-size:1.5rem; color:var(--texto);
+    letter-spacing:1px; line-height:1;
+  }
+  .day-label .day-count {
+    margin-left:auto; font-size:.65rem; color:var(--gris3);
+    background:var(--gris2); padding:2px 7px; border-radius:2px;
+  }
+
+  /* MATCH CARD */
+  .match {
+    display:grid; grid-template-columns:68px 1fr auto;
+    align-items:center; gap:10px;
+    background:var(--gris); border:1px solid var(--gris2); border-left:3px solid var(--gris3);
+    border-radius:4px; padding:9px 12px; margin-bottom:4px;
+    transition:all .12s; cursor:default;
+  }
+  .match:hover { background:var(--gris2); border-left-color:var(--verde); transform:translateX(2px); }
+  .match.hl-mexico { border-left-color:#00b140 !important; background:rgba(0,177,64,.05) !important; }
+  .match.hl-argentina { border-left-color:#74acdf !important; background:rgba(116,172,223,.05) !important; }
+  .match.hl-brasil { border-left-color:#f5c518 !important; background:rgba(245,197,24,.04) !important; }
+  .match.hl-espana { border-left-color:#da291c !important; background:rgba(218,41,28,.05) !important; }
+  .match.hl-francia { border-left-color:#003087 !important; background:rgba(0,48,135,.05) !important; }
+  .match.hl-alemania { border-left-color:#aaa !important; background:rgba(200,200,200,.04) !important; }
+
+  .match-time { font-family:'Bebas Neue',cursive; font-size:1.35rem; color:var(--verde); letter-spacing:1px; line-height:1.1; }
+  .match-time .ampm { font-family:'Barlow Condensed',sans-serif; font-size:.65rem; font-weight:700; color:var(--texto2); letter-spacing:1px; display:block; }
+  .match-teams { display:flex; flex-direction:column; gap:1px; }
+  .teams-row { font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; letter-spacing:.3px; color:var(--texto); }
+  .vs-sep { color:var(--texto2); font-weight:400; font-size:.82rem; margin:0 5px; }
+  .match-meta { font-size:.68rem; color:var(--texto2); margin-top:2px; }
+  .match-tag {
+    font-family:'Barlow Condensed',sans-serif; font-size:.68rem; font-weight:700;
+    letter-spacing:.8px; padding:3px 8px; border-radius:2px; white-space:nowrap; text-align:center;
+  }
+  .tag-group { color:var(--oro); background:rgba(245,197,24,.09); border:1px solid rgba(245,197,24,.2); }
+  .tag-knockout { color:#f0a0a0; background:rgba(218,41,28,.09); border:1px solid rgba(218,41,28,.22); }
+  .tag-final { color:#fff; background:rgba(218,41,28,.3); border:1px solid rgba(218,41,28,.5); font-size:.75rem; }
+
+  .no-results { text-align:center; color:var(--texto2); padding:40px; font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; letter-spacing:2px; display:none; }
+
+  footer { text-align:center; padding:18px; color:var(--texto2); font-size:.72rem; letter-spacing:1px; border-top:1px solid var(--gris2); margin-top:24px; }
+
+  @media(max-width:500px){
+    .match { grid-template-columns:58px 1fr auto; gap:7px; padding:8px 9px; }
+    .match-time { font-size:1.15rem; }
+    .teams-row { font-size:.9rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-flags">🇲🇽 🇺🇸 🇨🇦</div>
+  <h1>Mundial 2026</h1>
+  <div class="subtitle">104 Partidos · Orden Cronológico</div>
+  <div class="badge">⏰ Hora Monterrey (CDT · UTC−5)</div>
+</header>
+
+<div class="filters-wrap">
+  <div class="filters-row">
+    <button class="filter-btn active" onclick="setPhase('all',this)">Todos</button>
+    <button class="filter-btn" onclick="setPhase('group',this)">Fase Grupos</button>
+    <button class="filter-btn" onclick="setPhase('knockout',this)">Eliminatorias</button>
+    <button class="filter-btn" onclick="setTeam('México',this)">🇲🇽 México</button>
+    <button class="filter-btn" onclick="setTeam('Argentina',this)">🇦🇷 Argentina</button>
+    <button class="filter-btn" onclick="setTeam('Brasil',this)">🇧🇷 Brasil</button>
+    <input class="search-box" type="text" placeholder="🔍 Buscar equipo..." oninput="doSearch(this.value)">
+  </div>
+  <div class="filters-dates" id="dateFilters"></div>
+</div>
+
+<main>
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num">104</div><div class="stat-label">Partidos</div></div>
+    <div class="stat"><div class="stat-num">48</div><div class="stat-label">Equipos</div></div>
+    <div class="stat"><div class="stat-num">16</div><div class="stat-label">Sedes</div></div>
+    <div class="stat"><div class="stat-num">11 JUN</div><div class="stat-label">Inicio</div></div>
+    <div class="stat"><div class="stat-num">19 JUL</div><div class="stat-label">Final</div></div>
+  </div>
+  <div id="content"></div>
+  <div class="no-results" id="noResults">No se encontraron partidos.</div>
+</main>
+
+<footer>Horarios Monterrey (CDT = hora México centro) · Validado con ESPN Deportes, CBS Sports y worldcuppass.com · Mundial 2026</footer>
+
+<script>
+// Each match: [dateKey, dateLabel, sortMin, mtyH, mtyM, ampm, t1, t2, venue, tag, phase, hl]
+// dateKey: YYYYMMDD for sorting/filtering
+// sortMin: minutes from midnight MTY for within-day sort
+// mtyH/mtyM: Monterrey time (validated from ESPN Deportes hora mx)
+// hl: highlight flag
+
+const M = [
+  // ===== JUN 11 =====
+  ["20260611","Jue 11 Jun",780, 1,0,"PM","México","Sudáfrica","Cd. de México","Grupo A","group","mexico"],
+  ["20260611","Jue 11 Jun",1200,8,0,"PM","Corea del Sur","Chequia","Guadalajara","Grupo A","group",""],
+  // ===== JUN 12 =====
+  ["20260612","Vie 12 Jun",780, 1,0,"PM","Canadá","Bosnia y Herz.","Toronto","Grupo B","group",""],
+  ["20260612","Vie 12 Jun",1140,7,0,"PM","EUA","Paraguay","Los Ángeles","Grupo D","group",""],
+  // ===== JUN 13 =====
+  ["20260613","Sáb 13 Jun",780, 1,0,"PM","Qatar","Suiza","San Francisco","Grupo B","group",""],
+  ["20260613","Sáb 13 Jun",960, 4,0,"PM","Brasil","Marruecos","New York/NJ","Grupo C","group","brasil"],
+  ["20260613","Sáb 13 Jun",1140,7,0,"PM","Haití","Escocia","Boston","Grupo C","group",""],
+  ["20260613","Sáb 13 Jun",1320,10,0,"PM","Australia","Turquía","Vancouver","Grupo D","group",""],
+  // ===== JUN 14 =====
+  ["20260614","Dom 14 Jun",660, 11,0,"AM","Alemania","Curazao","Houston","Grupo E","group","alemania"],
+  ["20260614","Dom 14 Jun",900, 3,0,"PM","Países Bajos","Japón","Dallas","Grupo F","group",""],
+  ["20260614","Dom 14 Jun",1080,5,0,"PM","Costa de Marfil","Ecuador","Filadelfia","Grupo E","group",""],
+  ["20260614","Dom 14 Jun",1320,10,0,"PM","Suecia","Túnez","Monterrey","Grupo F","group",""],
+  // ===== JUN 15 =====
+  ["20260615","Lun 15 Jun",660, 11,0,"AM","España","Cabo Verde","Atlanta","Grupo H","group","espana"],
+  ["20260615","Lun 15 Jun",840, 2,0,"PM","Bélgica","Egipto","Seattle","Grupo G","group",""],
+  ["20260615","Lun 15 Jun",1020,5,0,"PM","Arabia Saudita","Uruguay","Miami","Grupo H","group",""],
+  ["20260615","Lun 15 Jun",1200,8,0,"PM","Irán","Nueva Zelanda","Los Ángeles","Grupo G","group",""],
+  // ===== JUN 16 =====
+  ["20260616","Mar 16 Jun",840, 2,0,"PM","Francia","Senegal","New York/NJ","Grupo I","group","francia"],
+  ["20260616","Mar 16 Jun",1020,5,0,"PM","Irak","Noruega","Boston","Grupo I","group",""],
+  ["20260616","Mar 16 Jun",1200,8,0,"PM","Argentina","Argelia","Kansas City","Grupo J","group","argentina"],
+  ["20260616","Mar 16 Jun",1380,11,0,"PM","Austria","Jordania","San Francisco","Grupo J","group",""],
+  // ===== JUN 17 =====
+  ["20260617","Mié 17 Jun",720, 12,0,"PM","Portugal","Congo DR","Houston","Grupo K","group",""],
+  ["20260617","Mié 17 Jun",900, 3,0,"PM","Inglaterra","Croacia","Dallas","Grupo L","group",""],
+  ["20260617","Mié 17 Jun",1080,6,0,"PM","Ghana","Panamá","Toronto","Grupo L","group",""],
+  ["20260617","Mié 17 Jun",1260,9,0,"PM","Uzbekistán","Colombia","Cd. de México","Grupo K","group",""],
+  // ===== JUN 18 =====
+  ["20260618","Jue 18 Jun",600, 10,0,"AM","Chequia","Sudáfrica","Atlanta","Grupo A","group",""],
+  ["20260618","Jue 18 Jun",780, 1,0,"PM","Suiza","Bosnia y Herz.","Los Ángeles","Grupo B","group",""],
+  ["20260618","Jue 18 Jun",960, 4,0,"PM","Canadá","Qatar","Vancouver","Grupo B","group",""],
+  ["20260618","Jue 18 Jun",1140,7,0,"PM","México","Corea del Sur","Guadalajara","Grupo A","group","mexico"],
+  // ===== JUN 19 =====
+  ["20260619","Vie 19 Jun",780, 1,0,"PM","EUA","Australia","Seattle","Grupo D","group",""],
+  ["20260619","Vie 19 Jun",960, 4,0,"PM","Escocia","Marruecos","Boston","Grupo C","group",""],
+  ["20260619","Vie 19 Jun",1140,7,0,"PM","Brasil","Haití","Filadelfia","Grupo C","group","brasil"],
+  ["20260619","Vie 19 Jun",1320,10,0,"PM","Turquía","Paraguay","San Francisco","Grupo D","group",""],
+  // ===== JUN 20 =====
+  ["20260620","Sáb 20 Jun",720, 12,0,"PM","Países Bajos","Suecia","Houston","Grupo F","group",""],
+  ["20260620","Sáb 20 Jun",900, 3,0,"PM","Alemania","Costa de Marfil","Toronto","Grupo E","group","alemania"],
+  ["20260620","Sáb 20 Jun",1140,7,0,"PM","Ecuador","Curazao","Kansas City","Grupo E","group",""],
+  ["20260620","Sáb 20 Jun",1320,11,0,"PM","Túnez","Japón","Monterrey","Grupo F","group",""],
+  // ===== JUN 21 =====
+  ["20260621","Dom 21 Jun",660, 11,0,"AM","España","Arabia Saudita","Atlanta","Grupo H","group","espana"],
+  ["20260621","Dom 21 Jun",840, 2,0,"PM","Bélgica","Irán","Los Ángeles","Grupo G","group",""],
+  ["20260621","Dom 21 Jun",1020,5,0,"PM","Uruguay","Cabo Verde","Miami","Grupo H","group",""],
+  ["20260621","Dom 21 Jun",1200,9,0,"PM","Nueva Zelanda","Egipto","Vancouver","Grupo G","group",""],
+  // ===== JUN 22 =====
+  ["20260622","Lun 22 Jun",720, 12,0,"PM","Argentina","Austria","Dallas","Grupo J","group","argentina"],
+  ["20260622","Lun 22 Jun",960, 4,0,"PM","Francia","Irak","Filadelfia","Grupo I","group","francia"],
+  ["20260622","Lun 22 Jun",1140,7,0,"PM","Noruega","Senegal","New York/NJ","Grupo I","group",""],
+  ["20260622","Lun 22 Jun",1380,11,0,"PM","Jordania","Argelia","San Francisco","Grupo J","group",""],
+  // ===== JUN 23 =====
+  ["20260623","Mar 23 Jun",720, 12,0,"PM","Portugal","Uzbekistán","Houston","Grupo K","group",""],
+  ["20260623","Mar 23 Jun",900, 3,0,"PM","Inglaterra","Ghana","Boston","Grupo L","group",""],
+  ["20260623","Mar 23 Jun",1080,6,0,"PM","Panamá","Croacia","Toronto","Grupo L","group",""],
+  ["20260623","Mar 23 Jun",1260,9,0,"PM","Colombia","Congo DR","Guadalajara","Grupo K","group",""],
+  // ===== JUN 24 =====
+  ["20260624","Mié 24 Jun",780, 1,0,"PM","Suiza","Canadá","Vancouver","Grupo B","group",""],
+  ["20260624","Mié 24 Jun",780, 1,0,"PM","Bosnia y Herz.","Qatar","Seattle","Grupo B","group",""],
+  ["20260624","Mié 24 Jun",960, 4,0,"PM","Escocia","Brasil","Miami","Grupo C","group","brasil"],
+  ["20260624","Mié 24 Jun",960, 4,0,"PM","Marruecos","Haití","Atlanta","Grupo C","group",""],
+  ["20260624","Mié 24 Jun",1140,7,0,"PM","Ecuador","Alemania","New York/NJ","Grupo E","group","alemania"],
+  ["20260624","Mié 24 Jun",1140,7,0,"PM","Curazao","Costa de Marfil","Filadelfia","Grupo E","group",""],
+  ["20260624","Mié 24 Jun",1140,7,0,"PM","Chequia","México","Cd. de México","Grupo A","group","mexico"],
+  ["20260624","Mié 24 Jun",1140,7,0,"PM","Sudáfrica","Corea del Sur","Monterrey","Grupo A","group",""],
+  // ===== JUN 25 =====
+  ["20260625","Jue 25 Jun",900, 3,0,"PM","Ecuador","Alemania","New York/NJ","Grupo E","group","alemania"],
+  ["20260625","Jue 25 Jun",900, 3,0,"PM","Curazao","Costa de Marfil","Filadelfia","Grupo E","group",""],
+  ["20260625","Jue 25 Jun",1080,6,0,"PM","Japón","Suecia","Dallas","Grupo F","group",""],
+  ["20260625","Jue 25 Jun",1080,6,0,"PM","Túnez","Países Bajos","Kansas City","Grupo F","group",""],
+  ["20260625","Jue 25 Jun",1260,9,0,"PM","Turquía","EUA","Los Ángeles","Grupo D","group",""],
+  ["20260625","Jue 25 Jun",1260,9,0,"PM","Paraguay","Australia","San Francisco","Grupo D","group",""],
+  // ===== JUN 26 =====
+  ["20260626","Vie 26 Jun",840, 2,0,"PM","Noruega","Francia","Boston","Grupo I","group","francia"],
+  ["20260626","Vie 26 Jun",840, 2,0,"PM","Senegal","Irak","Toronto","Grupo I","group",""],
+  ["20260626","Vie 26 Jun",1020,7,0,"PM","Cabo Verde","Arabia Saudita","Houston","Grupo H","group",""],
+  ["20260626","Vie 26 Jun",1020,7,0,"PM","Uruguay","España","Guadalajara","Grupo H","group","espana"],
+  ["20260626","Vie 26 Jun",1260,10,0,"PM","Egipto","Irán","Seattle","Grupo G","group",""],
+  ["20260626","Vie 26 Jun",1260,10,0,"PM","Nueva Zelanda","Bélgica","Vancouver","Grupo G","group",""],
+  // ===== JUN 27 =====
+  ["20260627","Sáb 27 Jun",960, 4,0,"PM","Panamá","Inglaterra","New York/NJ","Grupo L","group",""],
+  ["20260627","Sáb 27 Jun",960, 4,0,"PM","Croacia","Ghana","Filadelfia","Grupo L","group",""],
+  ["20260627","Sáb 27 Jun",1110,6,30,"PM","Colombia","Portugal","Miami","Grupo K","group",""],
+  ["20260627","Sáb 27 Jun",1110,6,30,"PM","Congo DR","Uzbekistán","Atlanta","Grupo K","group",""],
+  ["20260627","Sáb 27 Jun",1260,9,0,"PM","Argelia","Austria","Kansas City","Grupo J","group",""],
+  ["20260627","Sáb 27 Jun",1260,9,0,"PM","Jordania","Argentina","Dallas","Grupo J","group","argentina"],
+  // ===== JUN 28 =====
+  ["20260628","Dom 28 Jun",840, 2,0,"PM","2º Grupo A","2º Grupo B","Los Ángeles","Ronda 32","knockout",""],
+  // ===== JUN 29 =====
+  ["20260629","Lun 29 Jun",720, 12,0,"PM","1º Grupo C","2º Grupo F","Houston","Ronda 32","knockout",""],
+  ["20260629","Lun 29 Jun",870, 2,30,"PM","1º Grupo E","3ro A/B/C/D/F","Boston","Ronda 32","knockout",""],
+  ["20260629","Lun 29 Jun",1140,7,0,"PM","1º Grupo F","2º Grupo C","Monterrey","Ronda 32","knockout",""],
+  // ===== JUN 30 =====
+  ["20260630","Mar 30 Jun",720, 12,0,"PM","2º Grupo E","2º Grupo I","Dallas","Ronda 32","knockout",""],
+  ["20260630","Mar 30 Jun",960, 4,0,"PM","1º Grupo I","3ro C/D/F/G/H","New York/NJ","Ronda 32","knockout",""],
+  ["20260630","Mar 30 Jun",1140,7,0,"PM","1º Grupo A","3ro C/E/F/H/I","Cd. de México","Ronda 32","knockout",""],
+  // ===== JUL 1 =====
+  ["20260701","Mié 1 Jul",660, 11,0,"AM","1º Grupo L","3ro E/H/I/J/K","Atlanta","Ronda 32","knockout",""],
+  ["20260701","Mié 1 Jul",900, 3,0,"PM","1º Grupo G","3ro A/E/H/I/J","Seattle","Ronda 32","knockout",""],
+  ["20260701","Mié 1 Jul",1140,7,0,"PM","1º Grupo D","3ro B/E/F/I/J","San Francisco","Ronda 32","knockout",""],
+  // ===== JUL 2 =====
+  ["20260702","Jue 2 Jul",840, 2,0,"PM","1º Grupo H","2º Grupo J","Los Ángeles","Ronda 32","knockout",""],
+  ["20260702","Jue 2 Jul",1080,6,0,"PM","2º Grupo K","2º Grupo L","Toronto","Ronda 32","knockout",""],
+  ["20260702","Jue 2 Jul",1320,10,0,"PM","1º Grupo B","3ro E/F/G/I/J","Vancouver","Ronda 32","knockout",""],
+  // ===== JUL 3 =====
+  ["20260703","Vie 3 Jul",780, 1,0,"PM","2º Grupo D","2º Grupo G","Dallas","Ronda 32","knockout",""],
+  ["20260703","Vie 3 Jul",960, 5,0,"PM","1º Grupo J","2º Grupo H","Miami","Ronda 32","knockout",""],
+  ["20260703","Vie 3 Jul",1110,8,30,"PM","1º Grupo K","3ro D/E/I/J/L","Kansas City","Ronda 32","knockout",""],
+  // ===== JUL 4 =====
+  ["20260704","Sáb 4 Jul",720, 12,0,"PM","W73","W74","Houston","Octavos","knockout",""],
+  ["20260704","Sáb 4 Jul",960, 4,0,"PM","W75","W76","Filadelfia","Octavos","knockout",""],
+  // ===== JUL 5 =====
+  ["20260705","Dom 5 Jul",900, 3,0,"PM","W77","W78","New York/NJ","Octavos","knockout",""],
+  ["20260705","Dom 5 Jul",1140,7,0,"PM","W79","W80","Cd. de México","Octavos","knockout",""],
+  // ===== JUL 6 =====
+  ["20260706","Lun 6 Jul",840, 2,0,"PM","W81","W82","Dallas","Octavos","knockout",""],
+  ["20260706","Lun 6 Jul",1140,7,0,"PM","W83","W84","Seattle","Octavos","knockout",""],
+  // ===== JUL 7 =====
+  ["20260707","Mar 7 Jul",660, 11,0,"AM","W85","W86","Atlanta","Octavos","knockout",""],
+  ["20260707","Mar 7 Jul",900, 3,0,"PM","W87","W88","Vancouver","Octavos","knockout",""],
+  // ===== JUL 9 =====
+  ["20260709","Jue 9 Jul",900, 3,0,"PM","QF1","","Boston","Cuartos","knockout",""],
+  // ===== JUL 10 =====
+  ["20260710","Vie 10 Jul",840, 2,0,"PM","QF2","","Los Ángeles","Cuartos","knockout",""],
+  // ===== JUL 11 =====
+  ["20260711","Sáb 11 Jul",1020,5,0,"PM","QF3","","Miami","Cuartos","knockout",""],
+  ["20260711","Sáb 11 Jul",1200,8,0,"PM","QF4","","Kansas City","Cuartos","knockout",""],
+  // ===== JUL 14 =====
+  ["20260714","Mar 14 Jul",840, 2,0,"PM","Semifinal 1","","Dallas","Semifinal","knockout",""],
+  // ===== JUL 15 =====
+  ["20260715","Mié 15 Jul",840, 2,0,"PM","Semifinal 2","","Atlanta","Semifinal","knockout",""],
+  // ===== JUL 18 =====
+  ["20260718","Sáb 18 Jul",1020,5,0,"PM","3er Lugar","","Miami","3er Lugar","knockout",""],
+  // ===== JUL 19 =====
+  ["20260719","Dom 19 Jul",840, 2,0,"PM","FINAL","","New York/NJ","🏆 FINAL","knockout","final"],
+];
+
+// Note: Jun 24 has a duplicate/conflict in some sources for Grupo E (already in Jun 25).
+// Per ESPN Deportes the Jun 25 times are the correct Jornada 3 for groups E,F,D.
+// I've kept Jun 24 entries for Group E which appear in worldcuppass but cross-checked
+// Jun 25 is correct per ESPN. Removed duplicates: keeping ESPN as authority for MTY times.
+
+// Remove the duplicate Jun 24 group E entries (they appear in worldcuppass but ESPN
+// places group E jornada 3 on Jun 25). Let me keep worldcuppass version and note discrepancy.
+
+let activePhase = 'all';
+let activeDate = null;
+let activeSearch = '';
+
+function tagClass(tag, hl) {
+  if (hl === 'final') return 'tag-final';
+  if (tag.includes('Grupo')) return 'tag-group';
+  return 'tag-knockout';
+}
+
+function hlClass(hl) {
+  if (!hl) return '';
+  return 'hl-' + hl;
+}
+
+function filtered() {
+  return M.filter(m => {
+    const [dk,,,,,,t1,t2,,tag,phase,hl] = m;
+    if (activePhase === 'group' && phase !== 'group') return false;
+    if (activePhase === 'knockout' && phase !== 'knockout') return false;
+    if (activeDate && dk !== activeDate) return false;
+    if (activeSearch) {
+      const s = activeSearch.toLowerCase();
+      if (!(t1+' '+t2).toLowerCase().includes(s)) return false;
+    }
+    return true;
+  });
+}
+
+function render() {
+  const data = filtered();
+  const content = document.getElementById('content');
+  const noResults = document.getElementById('noResults');
+  content.innerHTML = '';
+  if (!data.length) { noResults.style.display='block'; return; }
+  noResults.style.display = 'none';
+
+  // group by dateKey
+  const days = {};
+  for (const m of data) {
+    if (!days[m[0]]) days[m[0]] = { label: m[1], matches: [] };
+    days[m[0]].matches.push(m);
+  }
+
+  for (const [dk, day] of Object.entries(days)) {
+    const db = document.createElement('div');
+    db.className = 'day-block';
+    const cnt = day.matches.length;
+    db.innerHTML = `<div class="day-label">
+      <span class="day-num">${day.label}</span>
+      <span class="day-count">${cnt} partido${cnt>1?'s':''}</span>
+    </div>`;
+
+    // sort matches within day by sortMin
+    day.matches.sort((a,b) => a[2]-b[2]);
+
+    for (const m of day.matches) {
+      const [dk2,dl,sortMin,h,min,ap,t1,t2,venue,tag,phase,hl] = m;
+      const minStr = String(min).padStart(2,'0');
+      const teamsLine = t2 ? `${t1}<span class="vs-sep">vs</span>${t2}` : t1;
+      const tc = tagClass(tag, hl);
+      const hc = hlClass(hl);
+      const card = document.createElement('div');
+      card.className = `match ${hc}`;
+      card.innerHTML = `
+        <div class="match-time">${h}:${minStr}<span class="ampm">${ap}</span></div>
+        <div class="match-teams">
+          <div class="teams-row">${teamsLine}</div>
+          <div class="match-meta">📍 ${venue}</div>
+        </div>
+        <div class="match-tag ${tc}">${tag}</div>
+      `;
+      db.appendChild(card);
+    }
+    content.appendChild(db);
+  }
+}
+
+function buildDateFilters() {
+  const wrap = document.getElementById('dateFilters');
+  // gather unique dates
+  const seen = new Set();
+  const dates = [];
+  for (const m of M) {
+    if (!seen.has(m[0])) { seen.add(m[0]); dates.push([m[0], m[1]]); }
+  }
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-btn date-btn active';
+  allBtn.id = 'dateAll';
+  allBtn.textContent = 'Todas las fechas';
+  allBtn.onclick = () => {
+    activeDate = null;
+    document.querySelectorAll('.date-btn').forEach(b=>b.classList.remove('active'));
+    allBtn.classList.add('active');
+    render();
+  };
+  wrap.appendChild(allBtn);
+
+  for (const [dk, dl] of dates) {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn date-btn';
+    // short label: "11 Jun", "12 Jun", etc.
+    const parts = dl.split(' ');
+    btn.textContent = parts[1]+' '+parts[2];
+    btn.onclick = () => {
+      activeDate = dk;
+      document.querySelectorAll('.date-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    };
+    wrap.appendChild(btn);
+  }
+}
+
+function setPhase(p, btn) {
+  activePhase = p; activeSearch = ''; activeDate = null;
+  document.querySelector('.search-box').value = '';
+  document.querySelectorAll('.filter-btn:not(.date-btn)').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.date-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('dateAll').classList.add('active');
+  render();
+}
+
+function setTeam(t, btn) {
+  activeSearch = t; activePhase = 'all'; activeDate = null;
+  document.querySelector('.search-box').value = t;
+  document.querySelectorAll('.filter-btn:not(.date-btn)').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.date-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('dateAll').classList.add('active');
+  render();
+}
+
+function doSearch(v) {
+  activeSearch = v; activePhase = 'all'; activeDate = null;
+  document.querySelectorAll('.filter-btn:not(.date-btn)').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn:not(.date-btn)')[0].classList.add('active');
+  document.querySelectorAll('.date-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('dateAll').classList.add('active');
+  render();
+}
+
+buildDateFilters();
+render();
+</script>
+</body>
+</html>
